@@ -1,0 +1,17 @@
+language: python
+  - "3.6"
+
+services:
+  - docker
+
+before_install:
+  - docker pull ghdl/ext:vunit-master
+  - docker run -dt --name=vunit ghdl/ext:vunit-master /bin/sh
+  - docker exec vunit /bin/sh -c 'apt-get install -y git'
+  - docker exec vunit /bin/sh -c 'git --version'
+  - docker exec vunit /bin/sh -c 'git clone --depth 1 https://github.com/MatthieuMichon/vhld-unit-test.git'
+
+script:
+  - docker exec vunit /bin/sh -c './vhld-unit-test/tests/run_vunit.py'
+  - docker stop vunit
+  - docker rm vunit
